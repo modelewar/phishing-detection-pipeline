@@ -7,17 +7,15 @@ import pandas as pd
 import numpy as np
 import pymongo
 from src.exception import NetworkSecurityException
-from src.logger import logging
-
-
+from src.logging.logger import logging
 
 load_dotenv()
 
-MONGODB_URL=os.getenv('MONGO_DB_URL')
+MONGO_DB_URL = os.getenv("MONGO_DB_URL", "mongodb://localhost:27017")
 
-print(MONGODB_URL)
+print(MONGO_DB_URL)
 
-ca=certifi.where()
+ca = certifi.where()
 
 
 class DataExtract():
@@ -25,51 +23,51 @@ class DataExtract():
         try:
             pass
         except Exception as e:
-            raise NetworkSecurityException(e,sys)
+            raise NetworkSecurityException(e, sys)
         
-    
-    def csv_to_json(self,file_path):
+    def csv_to_json(self, file_path):
         try:
-            data=pd.read_csv(file_path)
-            data.reset_index(drop=True,inplace=True)
+            data = pd.read_csv(file_path)
+            data.reset_index(drop=True, inplace=True)
 
-            records=list(json.loads(data.T.to_json()).values())
+            records = list(json.loads(data.T.to_json()).values())
 
             return records
         
         except Exception as e:
-            raise NetworkSecurityException(e,sys)
+            raise NetworkSecurityException(e, sys)
         
-
-    def insert_data_db(self,records,db,collection):
+    def insert_data_db(self, records, db, collection):
         try:
-            self.db=db
-            self.collection=collection
-            self.records=records
+            self.db = db
+            self.collection = collection
+            self.records = records
 
-            self.mongoclient=pymongo.MongoClient(MONGODB_URL)
+            self.mongoclient = pymongo.MongoClient(MONGO_DB_URL)
 
-            self.db=self.mongoclient[self.db]
+            self.db = self.mongoclient[self.db]
+            self.collection = self.db[self.collection]
 
-            self.collection=self.db[self.collection]
-
+            # Clear collection before inserting to prevent duplicates
+            self.collection.delete_many({})
             self.collection.insert_many(self.records)
             
             return len(self.records)
         
         except Exception as e:
-            raise NetworkSecurityException(e,sys)
+            raise NetworkSecurityException(e, sys)
 
 
-if __name__ =='__main__':
-    FILE_PATH='Network_Data\phisingData.csv'
+if __name__ == '__main__':
+    CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+    FILE_PATH = os.path.join(CURRENT_DIR, "Network_Data", "phisingData.csv")
 
-    DATABASE="KRISHNA"
-    Collection="NetworkData"
+    DATABASE = "MODELEWAR" 
+    Collection = "NetworkData"
 
-    networkobj=DataExtract()
-    rec=networkobj.csv_to_json(file_path=FILE_PATH)
-    print(rec)
+    networkobj = DataExtract()
+    rec = networkobj.csv_to_json(file_path=FILE_PATH)
+    print(f"Extracted {len(rec)} records from CSV.")
 
-    no_of_rec=networkobj.insert_data_db(records=rec,db=DATABASE,collection=Collection)
-    print(no_of_rec)
+    no_of_rec = networkobj.insert_data_db(records=rec, db=DATABASE, collection=Collection)
+    print(f"Inserted {no_of_rec} records into MongoDB.")

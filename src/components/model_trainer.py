@@ -27,7 +27,15 @@ import mlflow
 from urllib.parse import urlparse
 
 import dagshub
-dagshub.init(repo_owner='SKrishna-7', repo_name='NetworkSecurity', mlflow=True)
+dagshub_token = os.getenv("DAGSHUB_USER_TOKEN")
+if dagshub_token:
+    dagshub.auth.add_app_token(dagshub_token)
+
+dagshub.init(
+    repo_owner='delewarmohamed', 
+    repo_name='phishing-detection-pipeline', 
+    mlflow=True
+)
 
 
 class ModelTrainer:

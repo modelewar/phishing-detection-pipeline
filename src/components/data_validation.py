@@ -1,5 +1,5 @@
 from src.exception import NetworkSecurityException
-from src.logger import logging
+from src.logging.logger import logging
 from src.entity.config_entity import DataValidationConfig
 from src.entity.artifacts_entity import DataValidationArtifact, DataIngestionArtifact
 from src.constant.training_pipeline import *

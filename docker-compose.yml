@@ -1,0 +1,37 @@
+services:
+  # Local MongoDB Service
+  mongodb:
+    image: mongo:6.0
+    container_name: networksecurity_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=Modelewar
+    volumes:
+      - mongo_data:/data/db
+
+  # FastAPI App Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: networksecurity_app
+    restart: always
+    tty: true
+    stdin_open: true
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_DB_URL=mongodb://mongodb:27017
+      - PORT=8000
+      - DAGSHUB_USER_TOKEN=${DAGSHUB_USER_TOKEN}
+    depends_on:
+      - mongodb
+    volumes:
+      - ./artifact:/app/artifact
+      - ./logs:/app/logs
+      - ./final_model:/app/final_model
+
+volumes:
+  mongo_data:

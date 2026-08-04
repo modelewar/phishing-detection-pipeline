@@ -1,0 +1,15 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+venv/
+.venv/
+artifact/
+logs/
+final_model/
+prediction_output/
+best_model_result/
+val_data/

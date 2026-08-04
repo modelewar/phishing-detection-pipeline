@@ -7,3 +7,22 @@ logs/
 *.env
 .env
 .vscode/
+# Ignore log files
+*.log
+
+# Ignore log directories
+/logs/
+/log/
+**/logs/
+# Local datasets & execution outputs
+Network_Data/
+prediction_output/
+val_data/
+best_model_result/
+final_model/
+
+# Build artifacts
+Network_Security.egg-info/
+*.egg-info/
+build/
+dist/
