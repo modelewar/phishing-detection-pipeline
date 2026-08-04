@@ -1,8 +1,8 @@
 import os
 import sys
 
-from src.exception.exception import NetworkSecurityException 
-from src.logging.logger import logging
+from src.exception import NetworkSecurityException 
+from src.logging import logging
 
 from src.entity.artifacts_entity import DataTransformationArtifact,ModelTrainerArtifact
 from src.entity.config_entity import ModelTrainerConfig
